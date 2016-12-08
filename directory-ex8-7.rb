@@ -8,16 +8,30 @@ def input_students
   name = gets.chomp
   # while the name is not empty, repeat this code
   while !name.empty? do
-    puts "Hobby: "
-    hobby = gets.chomp
-    puts "Nationality: "
-    nationality = gets.chomp
-    puts "Height: "
-    height = gets.chomp
-    # add the student hash to the array
-    students << {name: name, cohort: :november, hobby: hobby, nationality: nationality, height: height}
-    puts "Now we have #{students.count} students"
-    # get another name from the user
+    puts "Cohort: "
+    cohort = gets.chomp.to_sym
+    until !cohort.empty?
+      puts "Please enter Cohort: "
+      cohort_string = gets.chomp
+      puts "You said #{cohort_string}, is this correct? Yes or No:"
+      answer = gets.chomp
+      if answer ==
+         "Yes"
+        cohort = cohort_string.to_sym
+      else
+        cohort = ""
+      end
+    end
+      puts "Hobby: "
+      hobby = gets.chomp
+      puts "Nationality: "
+      nationality = gets.chomp
+      puts "Height: "
+      height = gets.chomp
+      # add the student hash to the array
+      students << {name: name, cohort: cohort, hobby: hobby, nationality: nationality, height: height}
+      puts "Now we have #{students.count} students"
+      # get another name from the user
     puts "Name: "
     name = gets.chomp
   end
@@ -35,7 +49,7 @@ def print(students)
     Cohort: #{student[:cohort]},
     Hobby: #{student[:hobby]},
     Nationality: #{student[:nationality]},
-    Height: #{student[:height]}""".
+    Height: #{student[:height]}""".center(97)
   end
 end
 def print_footer(students)
