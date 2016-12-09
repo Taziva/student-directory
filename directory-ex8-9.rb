@@ -51,7 +51,11 @@ def print(students)
   puts student_report.select{|item| item.include? "Cohort: #{user_cohort}"}
 end
 def print_footer(students)
+  if students.length < 1
     puts "Overall, we have #{students.count} great students"
+  else
+    puts "Overall, we have #{students.count} great student"
+  end
 end
 
 students = input_students
