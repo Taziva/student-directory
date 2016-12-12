@@ -1,13 +1,16 @@
 @students = [] # an empty array accesible to all methods
-
+@filename
 def try_load_students
-  filename = ARGV.first # first argument from the command line
-  return if filename.nil? # get out out of the method if the filename isn't given
-  if File.exists?(filename)
-    load_students(filename)
-    puts "Loaded #{@students.count} from #{filename}"
+  @filename = ARGV.first # first argument from the command line
+  if @filename.nil?
+    @filename = "students.csv"
+    load_students(@filename)
+    puts "Loaded #{@students.count} from #{@filename}"
+  elsif File.exists?(@filename)
+    load_students(@filename)
+    puts "Loaded #{@students.count} from #{@filename}"
   else
-    puts "Sorry #{filename} doesn't exist"
+    puts "Sorry #{@filename} doesn't exist"
     exit
   end
 end
@@ -19,11 +22,15 @@ def interactive_menu
   end
 end
 
+def push_to_students_array(name, cohort)
+  @students << {name: name, cohort: cohort.to_sym}
+end
+
 def print_menu
   puts "1. Input the students"
   puts "2. Show the students"
-  puts "3. Save the list to students.csv"
-  puts "4. Load the list from students.csv"
+  puts "3. Save the list to #{@filename}"
+  puts "4. Load the list from #{@filename}"
   puts "9. Exit"
 end
 
@@ -36,14 +43,19 @@ end
 def process(selection)
   case selection
     when "1"
+      puts "You've chosen: 1. Input the students"
       input_students
     when "2"
+      puts "You've chosen: 2. Show the students"
       show_students
     when "3"
+      puts "You've chosen: 3. Save the list to students.csv"
       save_students
     when "4"
+      puts "You've chosen: 4. Load the list from students.csv"
       load_students
     when "9"
+      puts "You've chosen: 9. Exit"
       exit
     else
       puts "I don''t know what you mean try again"
@@ -52,7 +64,9 @@ end
 
 def save_students
   # open file for writing
-  file = File.open("students.csv", "w")
+  puts "What file would you like to save to:"
+  @filename = STDIN.gets.chomp
+  file = File.open(@filename, "w")
   # iterate over the array of students
   @students.each do |student|
     student_data = [student[:name], student[:cohort]]
@@ -62,13 +76,20 @@ def save_students
   file.close
 end
 
-def load_students(filename = "students.csv")
-  file = File.open(filename, "r")
-  file.readlines.each do |line|
+def load_students(filename = @filename)
+    puts "What file would you like to load:"
+  @filename = STDIN.gets.chomp
+  if File.exists?(@filename)
+    file = File.open(@filename, "r")
+    file.readlines.each do |line|
     name, cohort = line.chomp.split(',')
-    @students << {name: name, cohort: cohort.to_sym}
+    push_to_students_array(name, cohort)
+    end
+    file.close
+  else
+    puts "Sorry no such file exists"
+    exit
   end
-  file.close
 end
 
 def input_students
@@ -77,9 +98,14 @@ def input_students
   # get the first name
   name = STDIN.gets.chomp
   # while the name is not empty, repeat this code
+  verify_name(name)
+end
+
+def verify_name(name)
   while !name.empty? do
     # add the student hash to the array
-    @students << {name: name, cohort: :november}
+    cohort = "november"
+    push_to_students_array(name, cohort)
     puts "Now we have #{@students.count} students"
     # get another name from the user
     name = STDIN.gets.chomp

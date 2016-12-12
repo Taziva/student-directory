@@ -2,8 +2,11 @@
 
 def try_load_students
   filename = ARGV.first # first argument from the command line
-  return if filename.nil? # get out out of the method if the filename isn't given
-  if File.exists?(filename)
+  if filename.nil?
+    filename = "students.csv"
+    load_students(filename)
+    puts "Loaded #{@students.count} from #{filename}"
+  elsif File.exists?(filename)
     load_students(filename)
     puts "Loaded #{@students.count} from #{filename}"
   else
@@ -17,6 +20,10 @@ def interactive_menu
     print_menu
     process(STDIN.gets.chomp)
   end
+end
+
+def push_to_students_array(name, cohort)
+  @students << {name: name, cohort: cohort.to_sym}
 end
 
 def print_menu
@@ -36,14 +43,19 @@ end
 def process(selection)
   case selection
     when "1"
+      puts "You've chosen: 1. Input the students"
       input_students
     when "2"
+      puts "You've chosen: 2. Show the students"
       show_students
     when "3"
+      puts "You've chosen: 3. Save the list to students.csv"
       save_students
     when "4"
+      puts "You've chosen: 4. Load the list from students.csv"
       load_students
     when "9"
+      puts "You've chosen: 9. Exit"
       exit
     else
       puts "I don''t know what you mean try again"
@@ -66,7 +78,7 @@ def load_students(filename = "students.csv")
   file = File.open(filename, "r")
   file.readlines.each do |line|
     name, cohort = line.chomp.split(',')
-    @students << {name: name, cohort: cohort.to_sym}
+    push_to_students_array(name, cohort)
   end
   file.close
 end
@@ -77,9 +89,14 @@ def input_students
   # get the first name
   name = STDIN.gets.chomp
   # while the name is not empty, repeat this code
+  verify_name(name)
+end
+
+def verify_name(name)
   while !name.empty? do
     # add the student hash to the array
-    @students << {name: name, cohort: :november}
+    cohort = "november"
+    push_to_students_array(name, cohort)
     puts "Now we have #{@students.count} students"
     # get another name from the user
     name = STDIN.gets.chomp
